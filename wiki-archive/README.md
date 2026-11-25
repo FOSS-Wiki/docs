@@ -4,7 +4,7 @@ This section instructs how to set-up a weekly backup of your wiki's content, inc
 
 You can see our live version of this at [https://archive.foss.wiki](https://archive.foss.wiki)
 
-> [!WARNING]
+> [!CAUTION]
 > As per usual, check ALL the scripts and commands twice before running them, it's the internet after all. I cannot guarantee they work flawlessly.
 
 ## Prerequisites
