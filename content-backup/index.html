@@ -1,0 +1,45 @@
+<p>
+    This site publishes weekly archives of WIKINAME and stores them for two weeks.
+    All files are accessible both on this webpage or via rsync at <code>ARCHIVEDOMAIN::wikiname</code>.
+    The text dumps are uploaded to the Internet Archive after the archive is made; images are excluded as our image policy is not compatible with their upload guidelines.
+</p>
+
+<p>To mirror the archives, you can do so using rsync:</p>
+<ol>
+    <li>Attempt a dry-run with
+        <code>rsync -rltpvnH --progress --safe-links --delete-delay --delay-updates ARCHIVEDOMAIN::wikiname /srv/repo/wikiname/</code>
+    </li>
+    <li>Once it is verified to work, run the first sync (same command without <code>-n</code>):
+        <code>rsync -rltpvH --progress --safe-links --delete-delay --delay-updates ARCHIVEDOMAIN::wikiname /srv/repo/wikiname/</code>
+    </li>
+    <li>Once you have done the first sync you can add it to crontab using
+        <code>0 2 * * 2 rsync -rlptH --safe-links --delete-delay --delay-updates ARCHIVEDOMAIN::wikiname /srv/repo/wikiname/</code>
+        to sync from the archive weekly on Tuesday at 2AM.
+    </li>
+</ol>
+
+<p>
+    You can sync from the server at any time, however we run the script weekly on
+    <b id="run">Monday at 02:00 UTC</b>, so mirroring more than weekly will not change anything.
+    The script can take up to an hour to run, so please note that between the final dump being produced and the cleanup of the old files there will be the last 3 weeks of files
+    available.
+    Hence we recommend not syncing 3 hours either side of the time the script is due to run
+    (<span id="win">Sunday 23:00 UTC to Monday 05:00 UTC</span>). <i>Also note the times shown here are in your local timezone.</i>
+</p>
+
+<p>
+    LICENSE
+</p>
+
+<script>
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() + (8 - d.getUTCDay()) % 7);
+    d.setUTCHours(2, 0, 0, 0);
+    const f = t => new Date(t).toLocaleString([], { weekday: 'long', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+    run.textContent = f(d);
+    win.textContent = f(d - 3 * 36e5) + ' to ' + f(+d + 3 * 36e5);
+</script>
+
+</body>
+
+</html>

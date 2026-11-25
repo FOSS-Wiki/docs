@@ -1,0 +1,16 @@
+[Unit]
+Description=Wiki archiving script
+Documentation=https://github.com/FOSS-Wiki/docs/content-backup
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=wikiarchive
+Group=wikiarchive
+WorkingDirectory=/var/lib/wikiarchive
+RuntimeDirectory=wikiarchive
+Environment=XDG_RUNTIME_DIR=/run/wikiarchive
+Environment=PATH=/var/lib/wikiarchive/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/local/bin/wiki-archive.sh
+TimeoutStartSec=infinity

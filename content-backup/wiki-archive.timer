@@ -1,0 +1,10 @@
+[Unit]
+Description=Weekly run of wiki archiving script
+Requires=wiki-archive.service
+
+[Timer]
+OnCalendar=Mon 02:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target
