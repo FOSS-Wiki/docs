@@ -68,7 +68,6 @@ sudo -u wikiarchive -H uv tool install internetarchive
 
 Debian-Based
 ```sh
-sudo apt update
 sudo apt install -y nginx libnginx-mod-http-fancyindex certbot python3-certbot-nginx rsync zstd curl podman
 
 sudo -u wikiarchive -H sh -c 'curl -LsSf https://astral.sh/uv/install.sh | sh'
@@ -119,14 +118,6 @@ sudo systemctl enable --now wiki-archive.timer
 
 You can run it manually using `sudo systemctl start --no-block wiki-archive.service` then follow it with `journalctl -fu wiki-archive.service`.
 
-## rsync Setup
-
-You will need to open port `873/tcp` on your firewall after installing rsync. Then create and fill in `/root/rsync-motd.txt` with an appropriate description of your archive's purpose. Make sure to add your wiki name in `/etc/rsyncd.conf` once that is copied in.
-
-If your distro uses SELinux (RHEL-based) you will need to run `sudo setsebool -P rsync_export_all_ro 1` after installation of rsync.
-
-You will have to point your DNS directly at your server, you cannot proxy via Cloudflare. Set the DNS record to the gray-cloud if you use Cloudflare.
-
 ## HTTPS Setup
 
 You just need to run `sudo certbot --nginx -d ARCHIVEDOMAIN` when pointing your DNS at your server's IP. You will need to disable proxying on Cloudflare (set to gray cloud) for this to work, there is a workaround using DNS challenges to use proxying (orange cloud) see [here](https://certbot-dns-cloudflare.readthedocs.io/en/stable/) for more on this.
@@ -140,6 +131,14 @@ You will need to create an account on [archive.org](https://archive.org) and use
 ```sh
 sudo -u wikiarchive -H /var/lib/wikiarchive/.local/bin/ia configure
 ```
+
+## rsync Setup
+
+You will need to open port `873/tcp` on your firewall after installing rsync. Then create and fill in `/root/rsync-motd.txt` with an appropriate description of your archive's purpose. Make sure to add your wiki name in `/etc/rsyncd.conf` once that is copied in.
+
+If your distro uses SELinux (RHEL-based) you will need to run `sudo setsebool -P rsync_export_all_ro 1` after installation of rsync.
+
+You will have to point your DNS directly at your server, you cannot proxy via Cloudflare. Set the DNS record to the gray-cloud if you use Cloudflare.
 
 ## Troubleshooting
 
