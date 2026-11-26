@@ -1,0 +1,27 @@
+[Unit]
+Description=MediaWiki Database Backup
+Documentation=https://github.com/FOSS-Wiki/docs/tree/main/db-backup
+# if you use MySQL, switch `mariadb` with `mysql`
+After=network-online.target mariadb.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=db-backup
+Group=db-backup
+Environment=HOME=/var/lib/db-backup
+ExecStart=/usr/local/bin/db-backup.sh
+
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/db-backup
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+PrivateDevices=yes

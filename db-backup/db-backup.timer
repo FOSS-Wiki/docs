@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily MediaWiki Database Backup
+
+[Timer]
+# change this to the time of your lowest wiki activity
+OnCalendar=*-*-* 02:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
