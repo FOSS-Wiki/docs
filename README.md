@@ -2,6 +2,8 @@
 
 Assorted documentation used for [https://foss.wiki](https://foss.wiki) and its supporting services. Click the title of a section to open the directory with the instructions and relevant files for that service.
 
+These are built off our setup, so some of the instructions might need to be tweaked for you, but most of the instructions should be applicable to any "normal" MediaWiki installation. If you want any help with your own setup, give us a [ping](https://foss.wiki/FW:About#Contact) and I'll see if I can help you out :D
+
 ## Services
 
 ### [Database Backups](./db-backup)
