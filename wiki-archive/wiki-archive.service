@@ -1,6 +1,6 @@
 [Unit]
 Description=Wiki archiving script
-Documentation=https://github.com/FOSS-Wiki/docs/content-backup
+Documentation=https://github.com/FOSS-Wiki/docs/tree/main/wiki-archive
 Wants=network-online.target
 After=network-online.target
 
@@ -14,3 +14,16 @@ Environment=XDG_RUNTIME_DIR=/run/wikiarchive
 Environment=PATH=/var/lib/wikiarchive/.local/bin:/usr/local/bin:/usr/bin:/bin
 ExecStart=/usr/local/bin/wiki-archive.sh
 TimeoutStartSec=infinity
+
+UMask=0077
+NoNewPrivileges=no
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/wikiarchive /opt/mirror
+CapabilityBoundingSet=CAP_SETUID CAP_SETGID
+ProtectKernelTunables=no
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
