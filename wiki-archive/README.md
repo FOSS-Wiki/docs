@@ -116,7 +116,11 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now wiki-archive.timer
 ```
 
-You can run it manually using `sudo systemctl start --no-block wiki-archive.service` then follow it with `journalctl -fu wiki-archive.service`.
+You can run it manually and follow it with:
+```sh
+sudo systemctl start --no-block wiki-archive.service
+journalctl -fu wiki-archive.service
+```
 
 ## HTTPS Setup
 
