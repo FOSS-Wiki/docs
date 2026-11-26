@@ -17,8 +17,8 @@ You will need:
 - NGINX - any webserver works but you will need to write the config for it
 - NGINX Fancy Index
 - Certbot - highly recommended for HTTPS
-- rsync - optional for if you want people to be able to mirror your archives
 - podman - for [mwoffliner](https://github.com/openzim/mwoffliner) in the script
+- rsync - optional for if you want people to be able to mirror your archives
 - curl
 - zstd
 
@@ -53,7 +53,7 @@ sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 wikiarchive
 sudo loginctl enable-linger wikiarchive
 ```
 
-### Full Install Commands
+## Full Install Commands
 
 Make sure you set up the `wikiarchive` user for proper permissions (see [Server Setup](#server-setup). You can do this all as root by just running the command without `sudo -u wikiarchive -H`
 
@@ -75,19 +75,9 @@ sudo -u wikiarchive -H /var/lib/wikiarchive/.local/bin/uv tool install --upgrade
 sudo -u wikiarchive -H /var/lib/wikiarchive/.local/bin/uv tool install internetarchive
 ```
 
-## File Setup
+## Script Configurations
 
-`header.html` & `index.html` - Copy to `/etc/nginx/wiki-archive/`
-
-`wiki-archive.conf` - Copy to `/etc/nginx/conf.d/`
-
-`wiki-archive.service` & `wiki-archive.timer` - Copy to `/etc/systemd/system/`
-
-`wiki-archive.sh` - Copy to `/usr/local/bin/`, make sure to `chmod 755` the script
-
-`rsyncd.conf` - Copy to `/etc/rsyncd.conf` if using rsync for a mirror
-
-## Configuration
+Make sure to copy `wiki-archive.sh` to `/usr/local/bin/`, make sure to `chmod 755` the script
 
 Before using this, please read and define ALL the configurations at the top of the `wiki-archive.sh` script. The script WILL fail otherwise.
 
@@ -99,18 +89,29 @@ upload_to_ia || {
 }
 ```
 
-If your images are all considered as "free" within IA's policies, you may choose to upload the fulldump instead. You can do this by switching `TEXTDUMP_DIR` in the script to `FULLDUMP_DIR` in `upload_to_ia()`, we do not recommend disabling the textdump however.
+If your images are all considered as "free" within IA's policies, you may choose to upload the fulldump instead. You can do this by switching `TEXTDUMP_DIR` in the script to `FULLDUMP_DIR` in `upload_to_ia()`, we do not recommend disabling the textdump however
+
+## NGINX Configurations
+
+Make sure to first:
+- `header.html` & `index.html` - Copy to `/etc/nginx/wiki-archive/`
+- `wiki-archive.conf` - Copy to `/etc/nginx/conf.d/`
 
 You can also customise the `index.html` and `header.html` to your liking, remember to fill out your wiki's information on it as appropriate. `header.html` will appear BEFORE the file index and `index.html` will appear AFTER the file index. Where `wikiname` is listed, put your wiki's name all lowercase no spaces, e.g. `fosswiki`. Where `ARCHIVEDOMAIN` is listed, put the domain serving the archive of your wiki and `WIKI NAME` is for the full name of your wiki.
 
-To change the time of the script running, update `OnCalendar=Mon 02:00 UTC` in `wiki-archive.timer`. We suggest doing it at the point of lowest traffic on your wiki. Remember to update the HTML pages with the new time, ideally in UTC as the JS will update it client-side for the user.
-
 Finally, remember to add your domain to the `wiki-archive.conf` for NGINX in `server_name YOURDOMAIN;`. It is highly recommended to implement [HTTPS Setup](#https-setup) to secure your archive. You also will need to open port `80/tcp` and if you set up HTTPS port `443/tcp` on your firewall.
+
+### HTTPS Setup
+
+You just need to run `sudo certbot --nginx -d ARCHIVEDOMAIN` when pointing your DNS at your server's IP. You will need to disable proxying on Cloudflare (set to gray cloud) for this to work, there is a workaround using DNS challenges to use proxying (orange cloud) see [here](https://certbot-dns-cloudflare.readthedocs.io/en/stable/) for more on this.
 
 ## Timer Setup
 
-You can also use crontab for this, but we prefer systemd timers. To set-up the timer you can use:
+You can also use crontab for this, but we prefer systemd timers. Make sure to copy `wiki-archive.service` and `wiki-archive.timer` into `/etc/systemd/system/`.
 
+To change the time of the script running, update `OnCalendar=Mon 02:00 UTC` in `wiki-archive.timer`. We suggest doing it at the point of lowest traffic on your wiki. Remember to update the HTML pages with the new time, ideally in UTC as the JS will update it client-side for the user.
+
+Then to start the timer:
 ```sh
 sudo systemctl daemon-reload
 sudo systemctl enable --now wiki-archive.timer
@@ -121,10 +122,6 @@ You can run it manually and follow it with:
 sudo systemctl start --no-block wiki-archive.service
 journalctl -fu wiki-archive.service
 ```
-
-## HTTPS Setup
-
-You just need to run `sudo certbot --nginx -d ARCHIVEDOMAIN` when pointing your DNS at your server's IP. You will need to disable proxying on Cloudflare (set to gray cloud) for this to work, there is a workaround using DNS challenges to use proxying (orange cloud) see [here](https://certbot-dns-cloudflare.readthedocs.io/en/stable/) for more on this.
 
 ## Internet Archive Setup
 
@@ -138,7 +135,9 @@ sudo -u wikiarchive -H /var/lib/wikiarchive/.local/bin/ia configure
 
 ## rsync Setup
 
-You will need to open port `873/tcp` on your firewall after installing rsync. Then create and fill in `/root/rsync-motd.txt` with an appropriate description of your archive's purpose. Make sure to add your wiki name in `/etc/rsyncd.conf` once that is copied in.
+First copy `rsyncd.conf` to `/etc/rsyncd.conf` then you will need to open port `873/tcp` on your firewall after installing rsync. Make sure to add your wiki name to the config.
+
+Create and fill in `/root/rsync-motd.txt` with an appropriate description of your archive's purpose.
 
 If your distro uses SELinux (RHEL-based) you will need to run `sudo setsebool -P rsync_export_all_ro 1` after installation of rsync.
 
